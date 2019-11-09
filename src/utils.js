@@ -1,4 +1,7 @@
-import { ME_FILENAME, SUBJECTS_FILENAME } from './constants'
+import {
+  ME_FILENAME,
+  SUBJECTS_FILENAME
+} from './constants'
 
 export function jsonCopy(object) {
   return JSON.parse(JSON.stringify(object))
@@ -24,6 +27,7 @@ export function subjectFromKingdomUrl(url) {
   }
 }
 
+
 export function resolveSubjects(component, userSession, subjects) {
   subjects.map((subject, index) => {
     const options = {
@@ -32,45 +36,61 @@ export function resolveSubjects(component, userSession, subjects) {
       username: subject.username
     }
     return userSession.getFile(ME_FILENAME, options) // fetch me.json for each subject
-    .then(content => {
-      if(!content) {
+      .then(content => {
+        if (!content) {
 
-        subjects[index] = Object.assign({}, subject, { missing: true })
-        component.setState({ subjects })
-        return subjects
-      } else {
-        subjects[index] = Object.assign({}, subject, { missing: false }, JSON.parse(content))
-        component.setState({ subjects })
-        return subjects
-      }
+          subjects[index] = Object.assign({}, subject, {
+            missing: true
+          })
+          component.setState({
+            subjects
+          })
+          return subjects
+        } else {
+          subjects[index] = Object.assign({}, subject, {
+            missing: false
+          }, JSON.parse(content))
+          component.setState({
+            subjects
+          })
+          return subjects
+        }
 
-    })
+      })
   })
 }
 
 export function loadRuler(userSession, username, app) {
-  const options = { decrypt: false, username, app }
+  const options = {
+    decrypt: false,
+    username,
+    app
+  }
   return userSession.getFile(ME_FILENAME, options)
-  .then((content) => {
-    if(content) {
-      const ruler = JSON.parse(content)
-      return ruler
-    } else {
-      const ruler = null
-      return ruler
-    }
-  })
+    .then((content) => {
+      if (content) {
+        const ruler = JSON.parse(content)
+        return ruler
+      } else {
+        const ruler = null
+        return ruler
+      }
+    })
 }
 
 export function loadSubjects(userSession, username, app) {
-  const options = { decrypt: false, username, app }
+  const options = {
+    decrypt: false,
+    username,
+    app
+  }
   return userSession.getFile(SUBJECTS_FILENAME, options)
-  .then((content) => {
-    if(content) {
-      const subjects = JSON.parse(content)
-      return subjects
-    } else {
-      return []
-    }
-  })
+    .then((content) => {
+      if (content) {
+        const subjects = JSON.parse(content)
+        return subjects
+      } else {
+        return []
+      }
+    })
 }
